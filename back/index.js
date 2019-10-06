@@ -1,10 +1,11 @@
+const customers = require('./db/customers');
 const express = require('express');
 
 const server = express();
 
 // data will be stored in JSON format files
 server.get('/api/data', (req, res) => {
-    res.send('Success!');
+    res.send(customers);
 })
 
 const PORT = process.env.PORT || 6060;

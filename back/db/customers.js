@@ -45,3 +45,4 @@ const customers = [
         servicesTotalCost: '$13'
     }
 ]
+module.exports = customers;
