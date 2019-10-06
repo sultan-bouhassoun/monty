@@ -2,7 +2,8 @@ const express = require('express');
 
 const server = express();
 
-server.get('/data', (req, res) => {
+// data will be stored in JSON format files
+server.get('/api/data', (req, res) => {
     res.send('Success!');
 })
 
