@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import SimpleTable from '../../components/Table'
-
+import { getData, postData } from './API/index'
 class UsersDataTable extends Component {
     constructor(props){
         super(props)
@@ -53,6 +53,12 @@ class UsersDataTable extends Component {
         this.setState(state => ({
             rowsData: state.rowsData.filter(row => row.name!==name)
         }))
+    }
+
+    componentDidMount(){
+        getData.then(res => {
+            res.json().then(body => console.log('sadad',body))
+        })
     }
 
     render(){
