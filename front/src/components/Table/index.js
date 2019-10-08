@@ -6,6 +6,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+//import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,6 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function SimpleTable(props) {
   const classes = useStyles();
+  const editRowID = props.editRowID;
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
@@ -31,18 +36,69 @@ export default function SimpleTable(props) {
               {props.headers && props.headers.map( header => (
                   <TableCell>{header}</TableCell>
               ))}
+              <TableCell>{"Edit"}</TableCell>
+              <TableCell>{"Delete"}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {props.rows && props.rows.map(row => (
+            editRowID != row.name ?
+              <TableRow key={row.name}>
+              
+                <TableCell component="th" scope="row">{row.name}</TableCell>
+                <TableCell>{row.calories}</TableCell>
+                <TableCell>{row.fat}</TableCell>
+                <TableCell>{row.carbs}</TableCell>
+                <TableCell>{row.protein}</TableCell>
+              
+              <TableCell>
+                <EditIcon onClick={() => props.triggerEdit(row.name)}></EditIcon>
+              </TableCell>
+              <TableCell>
+                <DeleteIcon onClick={() => props.delete(row.name)}></DeleteIcon>
+              </TableCell>
+            </TableRow> 
+            :
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
-              <TableCell>{row.calories}</TableCell>
-              <TableCell>{row.fat}</TableCell>
-              <TableCell>{row.carbs}</TableCell>
-              <TableCell>{row.protein}</TableCell>
+              <TableCell>
+                <TextField
+                  value={row.calories}
+                  onChange={(e)=>props.edit(e,'calories',editRowID)}
+                >
+                  {row.calories}
+                </TextField>
+              </TableCell>
+              <TableCell>
+                <TextField
+                  value={row.fat}
+                  onChange={(e)=>props.edit(e,'fat',editRowID)}
+                >{row.fat}
+                </TextField> 
+              </TableCell>
+              <TableCell>
+                <TextField
+                  value={row.carbs}
+                  onChange={(e)=>props.edit(e,'carbs',editRowID)}
+                >{row.carbs}
+                </TextField>
+              </TableCell>
+              <TableCell>
+                <TextField
+                  value={row.protein}
+                  onChange={(e)=>props.edit(e,'protein',editRowID)}
+                >{row.protein}
+                </TextField>
+              </TableCell>
+            
+              <TableCell>
+                <EditIcon onClick={() => props.stopEdit(row.name)}></EditIcon>
+              </TableCell>
+              <TableCell>
+                <DeleteIcon onClick={() => props.delete(row.name)}></DeleteIcon>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
