@@ -1,0 +1,15 @@
+label {
+    margin-left: auto;
+    & input{
+        
+    }
+}
+
+form {
+    display: inline-block;
+    text-align: left; 
+    & .inputButton {
+        margin: auto;
+        display: block;
+    }   
+}
