@@ -9,6 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import TablePagination from '@material-ui/core/TablePagination';
 //import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles(theme => ({
@@ -41,8 +42,9 @@ export default function SimpleTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.rows && props.rows.map(row => (
-            editRowID != row.name ?
+          {props.rows && props.rows
+          .map(row => (
+            editRowID !== row.name ?
               <TableRow key={row.name}>
               
                 <TableCell component="th" scope="row">{row.name}</TableCell>
@@ -103,6 +105,25 @@ export default function SimpleTable(props) {
           ))}
         </TableBody>
       </Table>
+      {/*
+        In a perfect scenario we would create new component called PagedTable, where the table will be supporting
+        pagination, but since this is a tiny project the pagination will be added to an already existing component (Table)
+      */}
+      <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={props.recordsCount}
+          rowsPerPage={props.rowsPerPage}
+          page={props.page}
+          backIconButtonProps={{
+            'aria-label': 'previous page',
+          }}
+          nextIconButtonProps={{
+            'aria-label': 'next page',
+          }}
+          onChangePage={props.handleChangePage}
+          onChangeRowsPerPage={props.handleChangeRowsPerPage}
+      ></TablePagination>
     </Paper>
   );
 }

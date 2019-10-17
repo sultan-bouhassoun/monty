@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import SimpleTable from '../../components/Table';
-import { getData, postData } from './API/index';
+import { getData, postData, getPaginationData } from './API/index';
 import './users-data.scss'
 class UsersDataTable extends Component {
     constructor(props){
@@ -20,7 +20,11 @@ class UsersDataTable extends Component {
                 this.createData('Cupcake local', 305, 3.7, 67, 4.3),
                 this.createData('Gingerbread local', 356, 16.0, 49, 3.9),
             ],
-            editRowID: ''
+            editRowID: '',
+            rowsPerPage: 5,
+            page: 0,
+            error: false,
+            totalRecordsCount: 0
         }
 
         this.editData = this.editData.bind(this)
@@ -29,6 +33,9 @@ class UsersDataTable extends Component {
         this.stopEdit = this.stopEdit.bind(this)
         this.sendToServer = this.sendToServer.bind(this)
         this.submitFormHandler = this.submitFormHandler.bind(this)
+        this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
+        this.handleChangePage = this.handleChangePage.bind(this)
+        this.sendPayloadToServer = this.sendPayloadToServer.bind(this)
     }
 
     createData = (name, calories, fat, carbs, protein) => {
@@ -55,8 +62,14 @@ class UsersDataTable extends Component {
             rowsData: state.rowsData.filter(row => row.name!==name)
         }))
     }
+
     sendToServer(){
         postData(this.state.rowsData);
+    }
+
+    sendPayloadToServer(payload){
+        return postData(payload);
+
     }
 
     submitFormHandler(event){
@@ -68,19 +81,67 @@ class UsersDataTable extends Component {
         // like for example checking if the fields other than Name field are numbers or not
         if(data.get('name')){
             const newRow = this.createData(data.get('name'),data.get('cal'),data.get('fat'),data.get('carb'),data.get('protein'))
-            this.setState(state => ({
-                rowsData: [...state.rowsData,newRow]
-            }))
-        }
+            
+            // A change is made here, now on adding a row of data we first send it to the server and add it there
+            // if the addition occured successfuly then we add it to our UI, this will make the data in sync with
+            // the server
+            this.sendPayloadToServer([...this.state.rowsData,newRow]).then(res => {
+                if(res.status !== 200){
+                    // if the API response status is anything other than 200, then we don't want to change the 
+                    // state of the APP because server didn't achieve the writing to its database
+                }else{
+                    this.setState(state => ({
+                        rowsData: [...state.rowsData,newRow]
+                    }))
+                }
+                
+            })
 
+        }
+        
+
+    }
+    
+    handleChangeRowsPerPage(event){
+        this.setState( state =>({
+            rowsPerPage: event.target.value,
+            page: 0
+        }))
+    }
+
+    handleChangePage(event, newPageNumber){
+        console.log("handleChangePage", event.target.value, "newPageNumber", newPageNumber)
+
+        getPaginationData({"pageSize": 5, "pageNumber":newPageNumber}).then(res => {
+            res.json().then(body => {
+                console.log("body of getPageinationData", body)
+                let serverData = body.result.map(row => this.createData(row.name, row.calories, row.fat, row.carbs, row.protein))
+                this.setState(state => ({
+                    rowsData: serverData,
+                    totalRecordsCount: body.totalRecords,
+                    page: newPageNumber
+                }))
+            })
+        })
     }
 
     componentDidMount(){
-        getData.then(res => {
+        /*getData.then(res => {
             res.json().then(body => {
                 let serverData = body.map(row => this.createData(row.name, row.calories, row.fat, row.carbs, row.protein))
                 this.setState(state => ({
                     rowsData: serverData
+                }))
+            })
+        })*/
+
+        getPaginationData({"pageSize": 5, "pageNumber":this.state.page}).then(res => {
+            res.json().then(body => {
+                console.log("body of getPageinationData", body)
+                let serverData = body.result.map(row => this.createData(row.name, row.calories, row.fat, row.carbs, row.protein))
+                this.setState(state => ({
+                    rowsData: serverData,
+                    totalRecordsCount: body.totalRecords
                 }))
             })
         })
@@ -117,6 +178,11 @@ class UsersDataTable extends Component {
                     stopEdit={this.stopEdit}
                     edit={this.editData}
                     delete={this.deleteData}
+                    page={this.state.page}
+                    rowsPerPage={this.state.rowsPerPage}
+                    recordsCount={this.state.totalRecordsCount}
+                    handleChangePage={this.handleChangePage}
+                    handleChangeRowsPerPage={this.handleChangeRowsPerPage}
                 >
                 </SimpleTable>
                 <button onClick={this.sendToServer}>Submit</button>
