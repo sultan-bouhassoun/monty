@@ -110,11 +110,9 @@ class UsersDataTable extends Component {
     }
 
     handleChangePage(event, newPageNumber){
-        console.log("handleChangePage", event.target.value, "newPageNumber", newPageNumber)
 
         getPaginationData({"pageSize": 5, "pageNumber":newPageNumber}).then(res => {
             res.json().then(body => {
-                console.log("body of getPageinationData", body)
                 let serverData = body.result.map(row => this.createData(row.name, row.calories, row.fat, row.carbs, row.protein))
                 this.setState(state => ({
                     rowsData: serverData,
@@ -137,7 +135,6 @@ class UsersDataTable extends Component {
 
         getPaginationData({"pageSize": 5, "pageNumber":this.state.page}).then(res => {
             res.json().then(body => {
-                console.log("body of getPageinationData", body)
                 let serverData = body.result.map(row => this.createData(row.name, row.calories, row.fat, row.carbs, row.protein))
                 this.setState(state => ({
                     rowsData: serverData,

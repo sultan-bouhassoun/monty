@@ -59,7 +59,6 @@ server.post('/api/data/all', (req, res) => {
        return false
      }
     )
-    console.log("result",result)
     res.send({result: result, totalRecords: experimental.entriesLength});
   } else {
     // if we didn't get pageSize and pageNumber then we will send back an error
