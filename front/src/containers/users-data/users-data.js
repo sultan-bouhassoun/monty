@@ -1,6 +1,8 @@
 import React, {Component, Fragment} from 'react';
 import SimpleTable from '../../components/Table';
-import { getData, postData, getPaginationData } from './API/index';
+import InputField from '../../components/Input';
+import UIButton from '../../components/Button';
+import { postData, getPaginationData } from './API/index';
 import './users-data.scss'
 class UsersDataTable extends Component {
     constructor(props){
@@ -124,14 +126,6 @@ class UsersDataTable extends Component {
     }
 
     componentDidMount(){
-        /*getData.then(res => {
-            res.json().then(body => {
-                let serverData = body.map(row => this.createData(row.name, row.calories, row.fat, row.carbs, row.protein))
-                this.setState(state => ({
-                    rowsData: serverData
-                }))
-            })
-        })*/
 
         getPaginationData({"pageSize": 5, "pageNumber":this.state.page}).then(res => {
             res.json().then(body => {
@@ -151,21 +145,21 @@ class UsersDataTable extends Component {
                 {/* change to Material UI later https://material-ui.com/api/form-control/ */}
                 <form  onSubmit={this.submitFormHandler}>
                     <label>
-                        <input type="text" name="name" placeholder={"Dessert Name:"}/>
+                        <InputField name="name" placeholder={"Dessert Name:"}></InputField>
                     </label><br></br>
                     <label>
-                        <input type="text" name="cal" placeholder={"Calories:"}/>
+                        <InputField name="cal" placeholder={"Calories:"}></InputField>
                     </label><br></br>
                     <label>
-                        <input type="text" name="fat" placeholder={"Fat:"}/>
+                        <InputField name="fat" placeholder={"Fat:"}></InputField>
                     </label><br></br>
                     <label>
-                        <input type="text" name="carb" placeholder={"Carbs:"}/>
+                        <InputField name="carb" placeholder={"Carbs:"}></InputField>
                     </label><br></br>
                     <label>
-                        <input type="text" name="protein" placeholder={"Protein:"}/>
+                        <InputField name="protein" placeholder={"Protein:"}></InputField>
                     </label><br></br>
-                    <input className={"inputButton"} type="submit" value="ADD"/>
+                    <UIButton text="ADD" type="submit"></UIButton>
                 </form>
                 <SimpleTable
                     rows={this.state.rowsData}
@@ -182,7 +176,7 @@ class UsersDataTable extends Component {
                     handleChangeRowsPerPage={this.handleChangeRowsPerPage}
                 >
                 </SimpleTable>
-                <button onClick={this.sendToServer}>Submit</button>
+                <UIButton  onClick={this.sendToServer} text="Submit" type=""></UIButton>
             </Fragment>
         )
     }
